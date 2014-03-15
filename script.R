@@ -1,15 +1,16 @@
 #nstall.packages("XLConnect")
 library (XLConnect)
+source("functions.R")
 
 all.return <- loadWorkbook("data/All Returns.xlsx")
+fifa       <- loadWorkbook("data/FIFA outcomes.xlsx")
 
 
-brazil.return <- readWorksheet(all.return, sheet=3, region="A1:E5001", header=T)
+fifa.result   <- readWorksheet(fifa, sheet=1, region="B72:F87", header=F)
+colnames(fifa.result) <- c("Winner", "Runner.Up", "Winner.score", "Runner.Up.score", "Date")
 
+brazil.return <- get.returns(return.ws=all.return, 
+                             country=fifa.result[14,"Winner"],
+                             base.date=fifa.result[14,"Date"], 
+                             boundry.days=10)
 
-
-base.date <- brazil.return[6,1]
-upper.boundry <- brazil.return[6,1] + (24*60*60)*6
-lower.boundry <- brazil.return[6,1] - (24*60*60)*6
-
-brazil.return[upper.boundry >= brazil.return$Date & brazil.return$Date >= lower.boundry ,]
