@@ -6,11 +6,77 @@ all.return <- loadWorkbook("data/All Returns.xlsx")
 fifa       <- loadWorkbook("data/FIFA outcomes.xlsx")
 
 
-fifa.result   <- readWorksheet(fifa, sheet=1, region="B72:F87", header=F)
-colnames(fifa.result) <- c("Winner", "Runner.Up", "Winner.score", "Runner.Up.score", "Date")
+fifa.result   <- readWorksheet(fifa, sheet="Data", region="A1:F133", header=T)
+
+winning <- unique(fifa.result[, 2])
+losing  <- unique(fifa.result[, 3])
+teams <- unique(c(winning, losing))
+
+years <- sort(unique(as.numeric(format(fifa.result[,"Date"], "%Y"))), decreasing=F)
 
 brazil.return <- get.returns(return.ws=all.return, 
                              country=fifa.result[14,"Winner"],
                              base.date=fifa.result[14,"Date"], 
                              boundry.days=10)
 
+brazil <- loadWorkbook("data/brazil.xlsx")
+brazil <- readWorksheet(brazil, sheet=1, region="A1:E5001", header=T)
+
+germany <- loadWorkbook("data/germany.xlsx")
+germany <- readWorksheet(germany, sheet=1, header=T)
+
+
+brazil.winning.dates <- fifa.result[fifa.result[,2] == "Brazil", "Date"]
+brazil.losing.dates  <- fifa.result[fifa.result[,3] == "Brazil", "Date"]
+
+brazil.playing.dates <- sort(c(brazil.winning.dates, brazil.losing.dates), decreasing=F)
+
+brazil.return <- 0
+boundry.days  <- 10
+country.return <- brazil
+
+for(i in 1:length(brazil.playing.dates)){
+  base.date <- brazil.playing.dates[i]
+  
+  upper.boundry <- base.date + (24*60*60)*boundry.days
+  lower.boundry <- base.date - (24*60*60)*boundry.days
+  
+  result <- country.return[upper.boundry >= country.return$Date & country.return$Date >= lower.boundry ,]
+  
+  if(i == 1){
+    brazil.return <- result
+  }else{
+    brazil.return <- rbind(brazil.return, result)
+  }
+}
+
+## order the brazil returns and remove the duplicates
+brazil.return <- brazil.return[order(brazil.return$Date, decreasing=F),]
+brazil.return <- brazil.return[!duplicated(brazil.return$Date),]
+
+## writing csv file
+write.csv(brazil.return, "brazil returns.csv", row.names=FALSE, na="")
+
+## get only 2002 data for testing
+brazil.2002 <- brazil.return[as.numeric(format(brazil.return[,"Date"], "%Y"))==2002, ]
+
+## plot to test
+plot(brazil.2002$Close, type="l", xaxt="n")
+axis(1, at=1:nrow(brazil.2002), labels=brazil.2002[,"Date"])
+
+sample.final.date <- fifa.result[14,"Date"]
+
+upper.boundry <- sample.final.date + (24*60*60)*boundry.days
+lower.boundry <- sample.final.date - (24*60*60)*boundry.days
+
+germany.result <- germany[upper.boundry >= germany$Date & germany$Date >= lower.boundry ,]
+brazil.result  <- brazil[upper.boundry >= brazil$Date & brazil$Date >= lower.boundry ,]
+
+final.2002 <- merge(brazil.result, germany.result, by="Date", all=TRUE, sort=TRUE)
+
+## writing csv file
+write.csv(final.2002, "2002 final returns.csv", row.names=FALSE, na="")
+
+## plot to test
+plot(brazil.2002$Close, type="l", xaxt="n")
+axis(1, at=1:nrow(brazil.2002), labels=brazil.2002[,"Date"])
