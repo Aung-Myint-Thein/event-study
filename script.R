@@ -78,5 +78,6 @@ final.2002 <- merge(brazil.result, germany.result, by="Date", all=TRUE, sort=TRU
 write.csv(final.2002, "2002 final returns.csv", row.names=FALSE, na="")
 
 ## plot to test
-plot(brazil.2002$Close, type="l", xaxt="n")
-axis(1, at=1:nrow(brazil.2002), labels=brazil.2002[,"Date"])
+plot(final.2002[,9], type="l", xaxt="n")
+lines(final.2002[,5], col="red")
+axis(1, at=1:nrow(final.2002), labels=final.2002[,"Date"])
