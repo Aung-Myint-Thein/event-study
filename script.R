@@ -1,9 +1,36 @@
 #nstall.packages("XLConnect")
 library (XLConnect)
 library(seqinr)
-#source("functions.R")
 
-#all.return <- loadWorkbook("data/All Returns.xlsx")
+source("data import.R")
+source("functions.R")
+
+for(i in 1:nrow(fifa.result)){
+#for(i in 1:16){  
+  match <- fifa.result[i,]
+  get.match.return(match[,"Winner"], match[,"Loser"], match[,"Date"], match[,"Stage"], 10)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###################################### testng scripts 
+
+all.return <- loadWorkbook("data/All Returns.xlsx")
 
 fifa        <- loadWorkbook("data/FIFA outcomes.xlsx")
 fifa.result <- readWorksheet(fifa, sheet="Data", region="A1:F133", header=T)
@@ -97,3 +124,6 @@ write.csv(final.2002, "2002 final returns.csv", row.names=FALSE, na="")
 brazil <- loadWorkbook("data/All Returns copy 2.xlsx")
 brazil <- readWorksheet(brazil, sheet=1, header=T)
 class(brazil[,1])
+
+match <- fifa.result[16,]
+get.match.return(match[,2], match[,3], match[,6], match[,1], 10)
