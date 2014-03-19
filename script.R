@@ -75,6 +75,9 @@ brazil.2002 <- brazil.return[as.numeric(format(brazil.return[,"Date"], "%Y"))==2
 plot(brazil.2002$Close, type="l", xaxt="n")
 axis(1, at=1:nrow(brazil.2002), labels=brazil.2002[,"Date"])
 
+
+## check this potion till write to csv
+
 sample.final.date <- fifa.result[14,"Date"]
 
 upper.boundry <- sample.final.date + (24*60*60)*boundry.days
