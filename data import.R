@@ -1,4 +1,5 @@
 library (XLConnect)
+library(seqinr)
 rm(list=ls())
 
 ws1       <- loadWorkbook("data/Returns/All Returns copy 2.xlsx")
