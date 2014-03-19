@@ -1,18 +1,29 @@
 #nstall.packages("XLConnect")
 library (XLConnect)
-source("functions.R")
+library(seqinr)
+#source("functions.R")
 
-all.return <- loadWorkbook("data/All Returns.xlsx")
-fifa       <- loadWorkbook("data/FIFA outcomes.xlsx")
+#all.return <- loadWorkbook("data/All Returns.xlsx")
 
+fifa        <- loadWorkbook("data/FIFA outcomes.xlsx")
+fifa.result <- readWorksheet(fifa, sheet="Data", region="A1:F133", header=T)
 
-fifa.result   <- readWorksheet(fifa, sheet="Data", region="A1:F133", header=T)
+fifa.result[, 2:3] <- lapply(fifa.result[, 2:3], function(x) gsub(" ", ".", trimSpace(tolower(x))))
 
 winning <- unique(fifa.result[, 2])
 losing  <- unique(fifa.result[, 3])
 teams <- unique(c(winning, losing))
 
+sort(setdiff(teams, ls()))
+sort(setdiff(ls(), teams))
+
 years <- sort(unique(as.numeric(format(fifa.result[,"Date"], "%Y"))), decreasing=F)
+
+## to format the data for saving csv file
+format(min(germany[,1]), "%Y %m %d")
+
+## to call the object from string
+eval(parse(text=paste("df$", x, sep = "")))
 
 brazil.return <- get.returns(return.ws=all.return, 
                              country=fifa.result[14,"Winner"],
@@ -78,6 +89,8 @@ final.2002 <- merge(brazil.result, germany.result, by="Date", all=TRUE, sort=TRU
 write.csv(final.2002, "2002 final returns.csv", row.names=FALSE, na="")
 
 ## plot to test
-plot(final.2002[,9], type="l", xaxt="n")
-lines(final.2002[,5], col="red")
-axis(1, at=1:nrow(final.2002), labels=final.2002[,"Date"])
+
+
+brazil <- loadWorkbook("data/All Returns copy 2.xlsx")
+brazil <- readWorksheet(brazil, sheet=1, header=T)
+class(brazil[,1])
