@@ -137,6 +137,8 @@ fifa.result   <- readWorksheet(fifa, sheet="Data", region="A1:F133", header=T)
 
 fifa.result[, 2:3] <- lapply(fifa.result[, 2:3], function(x) gsub(" ", ".", trimSpace(tolower(x))))
 
+fifa.result <- fifa.result[order(fifa.result$Date),]
+
 winning <- unique(fifa.result[, 2])
 losing  <- unique(fifa.result[, 3])
 teams <- unique(c(winning, losing))

@@ -13,6 +13,31 @@ for(i in 1:nrow(fifa.result)){
 
 
 
+############### second version start here
+
+filename <- "Log returns by country.xlsx"
+
+wb <- loadWorkbook(filename, create = TRUE)
+
+for(i in 1:length(teams)){
+  team <- teams[i]
+  country.return <- get.country.return(team)
+  
+  if(nrow(country.return) > 0){
+    sheetname <- team
+    data.to.write <- country.return
+    
+    
+    createSheet(wb, name = sheetname)
+    writeWorksheet(wb, data.to.write, sheet = sheetname)
+  }
+}
+
+saveWorkbook(wb)
+
+################ end here
+
+
 
 
 
@@ -127,3 +152,18 @@ class(brazil[,1])
 
 match <- fifa.result[16,]
 get.match.return(match[,2], match[,3], match[,6], match[,1], 10)
+
+
+filename <- "myWorkbook.xlsx"
+sheetname <- "data1"
+data.to.write <- germany
+
+wb <- loadWorkbook(filename, create = TRUE)
+createSheet(wb, name = sheetname)
+writeWorksheet(wb, data.to.write, sheet = sheetname)
+
+createSheet(wb, name = "data2")
+writeWorksheet(wb, romania, sheet = "data2")
+
+
+saveWorkbook(wb)
