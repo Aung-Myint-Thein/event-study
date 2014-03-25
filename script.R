@@ -24,6 +24,8 @@ for(i in 1:length(teams)){
   country.return <- get.country.return(team)
   
   if(nrow(country.return) > 0){
+    country.return[, "Date"] <- as.character(format(country.return[, "Date"], "%d/%m/%Y"))
+    
     sheetname <- team
     data.to.write <- country.return
     
